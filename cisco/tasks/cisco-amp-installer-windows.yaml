@@ -1,0 +1,17 @@
+- name: Load Windows OS Connection Vars
+  include_vars:
+    file: ../vars/win-connection-vars.yaml
+  when: os_type == 'windows'
+
+- block:
+    - name: Executing script amp-installer.ps1
+      win_shell: "{{ lookup('file', '../scripts/amp-installer.ps1') }}" 
+      register: script_output
+      environment:
+        nas_path: '{{ nas_path_win }}'
+        mount_username: '{{ mount_username }}'
+        mount_password: '{{ mount_password }}'
+  always:
+    - name: Script output
+      debug:
+        msg: "{{ script_output }}"

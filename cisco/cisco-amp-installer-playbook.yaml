@@ -1,0 +1,39 @@
+- name: Ansible Playbook to install CISCO AMP
+  hosts: all
+  gather_facts: no
+  vars_files:
+    - ./vars/mount-cred.yaml
+    - ./vars/vcenter-cred-{{ ansible_vmware_env| default('test') }}.yaml
+  vars:
+    os_type: "{{ 'windows' if ansible_vmware_guest_os_family in ['windowsGuest','WIN'] else 'linux' }}"
+    agent_name: amp
+    nas_path_win: '\\iaas.hosted.lac.com'
+    nas_path_linux: '//isdowfsv01.hosted.lac.com'
+
+  pre_tasks:
+    - set_fact:
+        ansible_vmware_guest_path: "/{{ region }}/vm/{{ folderName }}/{{ inventory_hostname }}"
+      when: ansible_vmware_guest_path is not defined
+
+  tasks:
+    - block:
+      - name: Check PS is defined and WPS/LPS not in PS
+        debug:
+          msg: 'Cisco AMP installation only supported for Professional Services OS'
+      - meta: end_host
+      when: PS is defined and (('WPS' not in PS ) and ('LPS' not in PS ))
+
+    - block:
+      - name: osSupport is defined and osSupport != 'proservices' 
+        debug:
+          msg: 'Cisco AMP installation only supported for Professional Services OS'
+      - meta: end_host
+      when: osSupport is defined and osSupport != 'proservices'
+
+    - name: Load Cisco AMP  install tasks for linix
+      include: tasks/cisco-amp-installer-linux.yaml
+      when: os_type == 'linux'
+
+    - name: Load Cisco AMP  install tasks for windows
+      include: tasks/cisco-amp-installer-windows.yaml
+      when: os_type == 'windows'
