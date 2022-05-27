@@ -1,6 +1,6 @@
 - block:
-    - name: Executing script mcafee-installer.sh
-      script: ../scripts/mcafee-installer.sh
+    - name: Executing script amp-installer.sh
+      script: ../scripts/amp-installer.sh
       become: yes
       register: script_output
       environment:
