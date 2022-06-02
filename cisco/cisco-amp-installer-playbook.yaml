@@ -7,7 +7,7 @@
   vars:
     os_type: "{{ 'windows' if ansible_vmware_guest_os_family in ['windowsGuest','WIN'] else 'linux' }}"
     agent_name: amp
-    nas_path_win: '\\iaas.hosted.lac.com'
+    nas_path_win: '\\eis_svm.isd.lacounty.gov'
     nas_path_linux: '//isdowfsv01.hosted.lac.com'
 
   pre_tasks:
